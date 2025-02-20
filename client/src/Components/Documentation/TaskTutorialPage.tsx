@@ -66,7 +66,7 @@ const TaskTutorialPage = () => {
                 </>
             )}
             <div className="border-l-4 font-bold text-xl pl-2 py-2">
-                <Link to="/allTask">{"<"} Back</Link>
+                <Link to="/taskManager/list">{"<"} Back</Link>
             </div>
         </main>
     );

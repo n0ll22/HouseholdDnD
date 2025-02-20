@@ -6,11 +6,6 @@
     font-family: "Poppins";
 }
 
-.profile {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-}
 
 ::-webkit-scrollbar {
     background-color: white;

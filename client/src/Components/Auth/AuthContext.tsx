@@ -1,28 +1,38 @@
 import axios from "axios";
 import React, { createContext, useEffect, useState } from "react";
-//adattípusok
-interface AuthContext {
+
+// AuthContext types
+interface AuthContextType {
     loggedIn: boolean;
+    loading: boolean;
     getLoggedIn: () => Promise<void>;
 }
 
 interface AuthContextProviderProps {
     children: React.ReactNode;
 }
-//context létrehozása
-const AuthContext = createContext<AuthContext | null>(null);
 
-//meg kell majd adni egy children-t amin keresztül át lehet majd adni a context változóit
+// Create AuthContext
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     children,
 }) => {
-    //be van-e a felhasználó jelentkezve
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true); // Added loading state
 
-    //visszakapjuk a szerevertől, hogy van e session. ha van akkor be van user jelentkezve
+    // Check if the user is logged in
     const getLoggedIn = async () => {
-        const result = await axios.get("http://localhost:8000/user/loggedIn");
-        setLoggedIn(result.data);
+        try {
+            const result = await axios.get(
+                "http://localhost:8000/user/loggedIn"
+            );
+            setLoggedIn(result.data);
+        } catch (error) {
+            console.error("Error fetching login status", error);
+        } finally {
+            setLoading(false); // Loading completes whether success or error
+        }
     };
 
     useEffect(() => {
@@ -30,8 +40,8 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     }, []);
 
     return (
-        <AuthContext.Provider value={{ loggedIn, getLoggedIn }}>
-            {children}
+        <AuthContext.Provider value={{ loggedIn, loading, getLoggedIn }}>
+            {loading ? <p>Loading...</p> : children}
         </AuthContext.Provider>
     );
 };

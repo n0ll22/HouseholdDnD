@@ -1,8 +1,6 @@
 const router = require("express").Router();
-const { default: mongoose } = require("mongoose");
 const auth = require("../middleware/auth");
 const Task = require("../models/taskModel");
-const { $where } = require("../models/userModel");
 
 router.get("/", auth, async (req, res) => {
     try {
@@ -71,6 +69,20 @@ router.put("/:id", async (req, res) => {
         res.status(200).send("Data Updated Successfully");
     } catch (error) {
         console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+router.delete("/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (id) {
+            await Task.findByIdAndDelete(id);
+            res.status(200).send("Deleted!");
+        } else {
+            res.status(404).send("Not found!");
+        }
+    } catch (error) {
         res.status(500).send("Internal Server Error");
     }
 });

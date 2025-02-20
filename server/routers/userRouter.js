@@ -19,6 +19,27 @@ router.get("/profile/:id", async (req, res) => {
     }
 });
 
+router.post("/multipleUsers", async (req, res) => {
+    try {
+        const users = req.body;
+
+        console.log(users);
+        const userIds = users.map((user) => user.userId);
+
+        const result = await User.find({ _id: { $in: userIds } });
+
+        if (result) {
+            const UserDTO = result.map(
+                ({ passwordHash, __v, ...user }) => user._doc
+            );
+
+            return res.send(UserDTO);
+        }
+
+        res.send(0);
+    } catch (error) {}
+});
+
 // Register user
 router.post("/register", async (req, res) => {
     try {
@@ -59,6 +80,7 @@ router.post("/register", async (req, res) => {
             lvl: 1,
             avatar: "default.jpg",
             taskToday: [],
+            banner: "bg-red-400",
         });
 
         // Set token for user
@@ -175,6 +197,7 @@ router.get("/loggedInUser", async (req, res) => {
             clan: currentUser.clan,
             pendingComrade: currentUser.pendingComrade,
             pendingClan: currentUser.pendingClan,
+            banner: currentUser.banner,
         };
 
         res.status(200).json(UserDTO);
@@ -283,7 +306,7 @@ router.post("/sendFriendRequest/:id", async (req, res) => {
         id,
         {
             $push: {
-                pendingComrade: { userId: sender, accepted: false },
+                pendingComrade: { userId: sender, sender: id },
             },
         },
         { new: true }
@@ -293,7 +316,7 @@ router.post("/sendFriendRequest/:id", async (req, res) => {
         sender,
         {
             $push: {
-                pendingComrade: { userId: id, accepted: true },
+                pendingComrade: { userId: id },
             },
         },
         { new: true }
@@ -301,6 +324,81 @@ router.post("/sendFriendRequest/:id", async (req, res) => {
 
     return res.status(200).send({ message: "Friend Request Sent" });
 });
+
+router.put("/acceptFriendRequest/:id", async (req, res) => {
+    try {
+        const { id } = req.params; //the user who we accepted as friend
+        const { userId } = req.body; //the user who accepts the request
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { pendingComrade: { userId: id } },
+                $addToSet: { comrades: id },
+            },
+            { new: true }
+        );
+
+        const updatedComrade = await User.findByIdAndUpdate(
+            id,
+            {
+                $pull: { pendingComrade: { userId: userId } },
+                $addToSet: { comrades: userId },
+            },
+            { new: true }
+        );
+
+        if (!updatedUser || !updatedComrade) {
+            return res.status(404).send("User not found");
+        }
+
+        res.status(200).json({
+            message: "Friend request accepted",
+            updatedUser,
+        });
+    } catch (error) {
+        console.error("Error accepting friend request:", error);
+        res.status(500).send("Error accepting friend request");
+    }
+});
+
+router.put("/declineFriendRequest/:id", async (req, res) => {
+    try {
+        const { id } = req.params; // The user whose friend request is being declined
+        const { userId } = req.body; // The user declining the request
+
+        // Remove the friend request from the pendingComrade array for both users
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { pendingComrade: { userId: id } }, // Remove the request sent by "id"
+            },
+            { new: true }
+        );
+
+        const updatedComrade = await User.findByIdAndUpdate(
+            id,
+            {
+                $pull: { pendingComrade: { userId: userId } }, // Remove the request sent to "userId"
+            },
+            { new: true }
+        );
+
+        // Check if both updates were successful
+        if (!updatedUser || !updatedComrade) {
+            return res.status(404).send("User not found");
+        }
+
+        res.status(200).json({
+            message: "Friend request declined",
+            updatedUser,
+        });
+    } catch (error) {
+        console.error("Error declining friend request:", error);
+        res.status(500).send("Error declining friend request");
+    }
+});
+
 
 router.put("/updateUsername", async (req, res) => {
     try {
@@ -365,6 +463,62 @@ router.put("/updateAvatar", async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).send({ message: "Internal Server Error" });
+    }
+});
+
+router.put("/updateBanner", async (req, res) => {
+    try {
+        const { banner } = req.body;
+        const { user: _id } = jwt.decode(req.cookies.token);
+
+        console.log(_id, banner);
+
+        // Ensure that both _id and username are provided
+        if (!_id || !banner) {
+            return res
+                .status(400)
+                .send({ message: "ID and banner are required." });
+        }
+
+        // Update the user's username
+        const result = await User.findByIdAndUpdate(
+            _id,
+            { $set: { banner: banner } }, // Use $set to update the username field
+            { new: true } // Return the updated document
+        );
+
+        console.log(result);
+
+        if (result) {
+            return res.status(200).send(result); // Successfully updated
+        } else {
+            return res.status(404).send({ message: "User not found" }); // User not found
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: "Internal Server Error" });
+    }
+});
+
+router.get("/comrades", async (req, res) => {
+    const { user: id } = jwt.decode(req.cookies.token);
+
+    const user = await User.findById(id);
+
+    if (user) {
+        const result = await User.find(
+            {
+                _id: {
+                    $in: user.comrades,
+                },
+            }, // Query condition
+            { username: 1, avatar: 1, lvl: 1, _id: 1 } // Fields to include (projection)
+        );
+        console.log(result);
+
+        if (result) {
+            res.json(result);
+        }
     }
 });
 

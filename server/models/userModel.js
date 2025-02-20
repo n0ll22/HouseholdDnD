@@ -63,16 +63,18 @@ const userSchema = new mongoose.Schema({
             required: false,
         },
     },
-    pendingComrade: {
-        userId: {
-            type: String,
-            required: false,
+    pendingComrade: [
+        {
+            userId: {
+                type: String,
+                required: false,
+            },
+            sender: {
+                type: String,
+                required: true,
+            },
         },
-        accepted: {
-            type: Boolean,
-            required: false,
-        },
-    },
+    ],
     pendingClan: {
         clanId: {
             type: String,
@@ -82,6 +84,10 @@ const userSchema = new mongoose.Schema({
             type: Boolean,
             required: false,
         },
+    },
+    banner: {
+        type: String,
+        required: true,
     },
 });
 

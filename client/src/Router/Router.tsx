@@ -1,125 +1,94 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import React, { useContext } from "react";
-import { Task, User } from "../Components/types";
-import { Link, Routes, Route, BrowserRouter } from "react-router-dom";
-import AsideDetector from "../Components/AsideDetector";
-import Login from "../Components/Auth/Login";
-import Register from "../Components/Auth/Register";
-import AllTask from "../Components/Documentation/AllTask";
-import Calculation from "../Components/Documentation/Calculation";
-import TaskTutorialPage from "../Components/Documentation/TaskTutorialPage";
-import Tutorial from "../Components/Documentation/Tutorial";
-import Footer from "../Components/Footer";
-import AddTask from "../Components/Tools/AddTask";
-import ManageTask from "../Components/Tools/ManageTask";
-import PlayerProfile from "../Components/Tools/PlayerProfile";
-import Profile from "../Components/Tools/Profile";
-import TaskComplete from "../Components/Tools/TaskCounter";
-import TaskDetail from "../Components/Tools/TaskDetail";
-import Users from "../Components/Users";
-import MainPage from "../Pages/MainPage";
+import App from "../App";
 import AuthContext from "../Components/Auth/AuthContext";
-import Notification from "../Components/Notification/Notification";
+import MainPage from "../Pages/MainPage/MainPage";
+import Login from "../Components/Auth/Login/Login";
+import TaskCounterPage from "../Pages/TaskCounterPage/TaskCounterPage";
+import TaskManagerPage from "../Pages/TaskManagerPage/TaskManagerPage";
+import EditTask from "../Components/TaskManager/EditTask/EditTask";
+import ListTask from "../Components/TaskManager/ListTask/ListTask";
+import AddTask from "../Components/TaskManager/AddTask/AddTask";
+import TaskTutorialPage from "../Components/Documentation/TaskTutorialPage";
+import EditTaskDetail from "../Components/TaskManager/EditTaskDetail/EditTaskDetail";
+import UsersPage from "../Pages/UsersPage/UsersPage";
+import ProfilePage from "../Pages/ProfilePage/ProfilePage";
+import UserProfile from "../Components/Profile/Profile/UserProfile";
+import Register from "../Components/Auth/Register/Register";
+import PlayerList from "../Components/Users/PlayerList";
+import FriendList from "../Components/Users/FriendList";
+import PlayerProfile from "../Components/Profile/Profile/PlayerProfile";
+import Chat from "../Components/Chat/Chat";
 
-interface Props {
-    userData: User;
-    usersData: User[];
-    taskData: Task[] | null;
-}
+const Router: React.FC = () => {
+  const auth = useContext(AuthContext);
 
-const Router: React.FC<Props> = ({ userData, usersData, taskData }) => {
-    const { loggedIn } = useContext(AuthContext);
+  if (!auth) {
+    return <p>Error: AuthContext not available</p>;
+  }
 
-    console.log("as");
+  const { loggedIn, loading } = auth;
 
-    return (
-        <BrowserRouter>
-            <div className="grid grid-cols-6 xl:grid-cols-8 min-h-screen h-full text-gray-800">
-                <AsideDetector />
-                {!loggedIn && (
-                    <div className="col-span-5 xl:col-span-8">
-                        <Routes>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                        </Routes>
-                    </div>
-                )}
-                {loggedIn && taskData && (
-                    <>
-                        <Link
-                            reloadDocument
-                            to="/profile"
-                            className="profile fixed right-4 top-4 w-14 h-14 rounded-md shadow-lg cursor-pointer"
-                            style={{
-                                backgroundImage: `url("./src/img/pfps/${userData.avatar}")`,
-                            }}
-                        ></Link>
-                        <Notification />
-                        <div className="col-span-5 xl:col-span-8 w-full">
-                            <Routes>
-                                <Route path="/" element={<MainPage />} />
-                                <Route
-                                    path="/allTask"
-                                    element={<AllTask tasks={taskData} />}
-                                />
-                                <Route
-                                    path="/calculation"
-                                    element={<Calculation />}
-                                />
-                                <Route
-                                    path="/tutorial"
-                                    element={<Tutorial />}
-                                />
-                                <Route path="/addTask" element={<AddTask />} />
-                                s
-                                <Route
-                                    path="/manageTask"
-                                    element={<ManageTask tasks={taskData} />}
-                                />
-                                <Route
-                                    path="/profile"
-                                    element={<Profile user={userData} />}
-                                />
-                                <Route
-                                    path="/profile/:id"
-                                    element={
-                                        <PlayerProfile
-                                            comrades={userData.comrades}
-                                            _id={userData._id}
-                                            pendingComrade={
-                                                userData.pendingComrade
-                                            }
-                                        />
-                                    }
-                                />
-                                <Route
-                                    path="/taskComplete"
-                                    element={
-                                        <TaskComplete
-                                            userData={userData}
-                                            taskData={taskData}
-                                        />
-                                    }
-                                />
-                                <Route
-                                    path="/taskTutorial/:id"
-                                    element={<TaskTutorialPage />}
-                                />
-                                <Route
-                                    path="/task/:id"
-                                    element={<TaskDetail />}
-                                />
-                                <Route
-                                    path="/users"
-                                    element={<Users data={usersData} />}
-                                />
-                            </Routes>
-                        </div>
-                    </>
-                )}
-            </div>
-            <Footer />
-        </BrowserRouter>
-    );
+  if (loading) {
+    return <p>Loading...</p>;
+    console.log("LOADING:", loggedIn);
+  }
+
+  console.log("STATE: ", loggedIn);
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <App />,
+      errorElement: <h1>Page Not Found</h1>,
+      children: loggedIn
+        ? [
+            { index: true, element: <MainPage /> },
+            { path: "taskComplete", element: <TaskCounterPage /> },
+            {
+              path: "taskManager",
+              element: <TaskManagerPage />,
+              children: [
+                { path: "list", element: <ListTask /> },
+                {
+                  path: "list/tutorial/:id",
+                  element: <TaskTutorialPage />,
+                },
+                { path: "edit", element: <EditTask /> },
+                {
+                  path: "edit/:id",
+                  element: <EditTaskDetail />,
+                },
+                { path: "add", element: <AddTask /> },
+              ],
+            },
+            {
+              path: "users",
+              element: <UsersPage />,
+              children: [
+                { path: "list", element: <PlayerList /> },
+                { path: ":id", element: <PlayerProfile /> },
+              ],
+            },
+            {
+              path: "profile",
+              element: <ProfilePage />,
+              children: [
+                { path: "info", element: <UserProfile /> },
+                { path: "comrades", element: <FriendList /> },
+                { path: "chat", element: <Chat /> },
+              ],
+            },
+          ]
+        : [
+            { index: true, path: "/", element: <Login /> },
+            { path: "register", element: <Register /> },
+          ],
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 };
 
 export default Router;

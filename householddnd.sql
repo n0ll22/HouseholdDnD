@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `task`
+-- List structure for table `task`
 --
 
 CREATE TABLE `task` (
@@ -71,7 +71,7 @@ INSERT INTO `task` (`id`, `exp`, `title`, `description`, `tutorials`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- List structure for table `user`
 --
 
 CREATE TABLE `user` (

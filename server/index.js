@@ -24,9 +24,9 @@ app.use(cp());
 app.use(express.json());
 
 // Routes
-
-app.use("/user", require("./routers/userRouter")); // Pass MySQL connection to userRouter
-app.use("/task", require("./routers/taskRouter")); // Pass MySQL connection to taskRouter
+app.use("/user", require("./routers/userRouter"));
+app.use("/task", require("./routers/taskRouter"));
+app.use("/notification", require("./routers/notificationRouter"));
 
 // Default route
 app.get("/", (req, res) => {

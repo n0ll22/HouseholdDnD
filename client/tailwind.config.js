@@ -2,6 +2,12 @@
 export default {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
     theme: {
+      
+            boxShadow: {
+                'inner-light': 'inset 0 1px 3px rgba(0, 0, 0, 0.2)', // Lighter shadow
+                'inner-strong': 'inset 0 4px 6px rgba(0, 0, 0, 0.6)', // Stronger shadow
+            },
+     
         screens: {
             "2xl": { max: "1535px" },
             // => @media (max-width: 1535px) { ... }

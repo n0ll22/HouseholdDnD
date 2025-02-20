@@ -1,9 +1,22 @@
+export const apiUrl = "http://localhost:8000";
+
 export interface Task {
     _id: string;
     title: string;
     exp: number;
     description: string;
-    tutorial: [];
+    tutorial: string[];
+}
+
+export interface Notifications {
+    title: string;
+    body: {
+        message: string;
+    };
+    date: string;
+    senderAvatar: string;
+    senderUsername: string;
+    read: boolean;
 }
 
 export interface User {
@@ -13,12 +26,22 @@ export interface User {
     exp: number;
     lvl: number;
     taskToday: number[];
-    comrades: string[]
-    pendingComrade: [{
-        userId: string,
-        accepted: boolean
-    }]
-    description: string
+    comrades: string[];
+    pendingComrade: [
+        {
+            userId: string;
+            sender: string;
+        }
+    ];
+    description: string;
+    banner: string;
+}
+
+export interface ExtendedUser {
+    avatarDiv: JSX.Element;
+    username: string;
+    lvl: number;
+    _id: string;
 }
 
 export interface LoginData {
@@ -28,10 +51,6 @@ export interface LoginData {
 
 export interface UserProp {
     users: User[];
-}
-
-export interface TaskProp {
-    tasks: Task[];
 }
 
 export interface Levels {
