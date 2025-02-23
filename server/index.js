@@ -3,6 +3,13 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cp = require("cookie-parser");
 const cors = require("cors");
+const http = require("http");
+const socketHandler = require("./socket");
+const app = express();
+
+const server = http.createServer(app);
+
+socketHandler(server);
 
 // Load environment variables
 dotenv.config("./.env");
@@ -16,7 +23,6 @@ mongoose
     .then(() => console.log("Connected to MongoDB"));
 
 // Initialize Express app
-const app = express();
 
 // Middleware
 app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
@@ -39,6 +45,6 @@ app.use((req, res, next) => {
 
 // Start the server
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server started. Listening on port ${PORT}`);
 });
