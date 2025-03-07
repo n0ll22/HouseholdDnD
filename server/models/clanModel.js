@@ -15,6 +15,6 @@ const clanSchema = new mongoose.Schema({
     },
 });
 
-const Clan = mongoose.model("clan", clanSchema);
+const Clan = mongoose.model("Clan", clanSchema);
 
 module.exports = Clan;

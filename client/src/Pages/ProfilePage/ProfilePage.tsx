@@ -7,10 +7,16 @@ import { Link, Outlet } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
   const {
-    data: userData,
-    pending,
-    error,
+    data: loggedInUser,
+    pending: loggedInUserPending,
+    error: loggedInUserError,
   } = useGet<User>("http://localhost:8000/user/loggedInUser");
+
+  const {
+    data: comrades,
+    pending: comradesPending,
+    error: comradesError,
+  } = useGet<User>("http://localhost:8000/user/comrades");
 
   const [selectedPage, setSelectedPage] = useState(window.location.pathname);
 
@@ -62,13 +68,13 @@ const ProfilePage: React.FC = () => {
           </button>
         </Link>
       </div>
-      {userData ? <Outlet context={{ userData }} /> : null}
-      {pending && (
+      {loggedInUser ? <Outlet context={{ loggedInUser, comrades }} /> : null}
+      {loggedInUserPending && (
         <div className="w-full flex items-center justify-center">
-          <LoadingSpinner loading={pending} />
+          <LoadingSpinner loading={loggedInUserPending} />
         </div>
       )}
-      {error ? <div>Network Error</div> : null}
+      {loggedInUserError ? <div>Network Error</div> : null}
     </>
   );
 };

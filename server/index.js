@@ -3,9 +3,12 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cp = require("cookie-parser");
 const cors = require("cors");
+const http = require("http")
+const socket = require("./socket")
 
 // Load environment variables
-dotenv.config("./.env");
+dotenv.config();
+
 
 // Create MySQL connection
 mongoose
@@ -17,15 +20,20 @@ mongoose
 
 // Initialize Express app
 const app = express();
+const server = http.createServer(app);
 
 // Middleware
 app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
 app.use(cp());
 app.use(express.json());
 
+socket(server)
+
+
 // Routes
 app.use("/user", require("./routers/userRouter"));
 app.use("/task", require("./routers/taskRouter"));
+app.use("/chat", require("./routers/chatRouter"));
 app.use("/notification", require("./routers/notificationRouter"));
 
 // Default route
@@ -39,6 +47,6 @@ app.use((req, res, next) => {
 
 // Start the server
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server started. Listening on port ${PORT}`);
 });
