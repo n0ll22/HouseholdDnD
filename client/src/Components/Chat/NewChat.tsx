@@ -11,10 +11,10 @@ type Props = {
 
 const NewChat: React.FC<Props> = ({ loggedInUser, comrades }) => {
   const [input, setInput] = useState<string>("");
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [participantIds, setParticipants] = useState<string[]>([]);
 
   const handleAddParticipants = (_id: string) => {
-    const alreadyAdded = participants.find((i) => i === _id);
+    const alreadyAdded = participantIds.find((i) => i === _id);
 
     if (alreadyAdded) return;
 
@@ -23,20 +23,20 @@ const NewChat: React.FC<Props> = ({ loggedInUser, comrades }) => {
   };
 
   const handleRemoveParticipants = (_id: string) => {
-    const filteredParticipants = participants.filter((i) => i !== _id);
+    const filteredParticipants = participantIds.filter((i) => i !== _id);
     setParticipants(() => filteredParticipants);
   };
 
   const handleNewChat = (e: FormEvent) => {
     e.preventDefault();
 
-    const allParticipants = participants;
+    const allParticipants = participantIds;
     allParticipants.push(loggedInUser._id);
 
     console.log(allParticipants);
 
     axios
-      .post(apiUrl + "/chat/", { participants: allParticipants })
+      .post(apiUrl + "/chat/", { participantIds: allParticipants })
       .then((res) => console.log(res.data))
       .catch((err) => {
         console.error(err);
@@ -46,7 +46,7 @@ const NewChat: React.FC<Props> = ({ loggedInUser, comrades }) => {
     setInput(() => "");
   };
 
-  console.log(participants);
+  console.log(participantIds);
   return (
     <form className="w-1/2" onSubmit={(e) => handleNewChat(e)}>
       <input
@@ -58,10 +58,10 @@ const NewChat: React.FC<Props> = ({ loggedInUser, comrades }) => {
       />
       <div>
         <div className="flex space-x-4">
-          {participants &&
+          {participantIds &&
             comrades &&
             comrades
-              .filter((i) => participants.includes(i._id))
+              .filter((i) => participantIds.includes(i._id))
               .map((i, index) => (
                 <div
                   className="flex items-center border border-black p-2 rounded-md hover:bg-red-400 hover:text-white hover:border-red-600 space-x-2 transition cursor-pointer"
@@ -74,13 +74,13 @@ const NewChat: React.FC<Props> = ({ loggedInUser, comrades }) => {
                 </div>
               ))}
         </div>
-        {participants && (
+        {participantIds && (
           <div>
             <button
               className="flex items-center border border-black p-2 rounded-md hover:bg-green-400 hover:text-white hover:border-green-600 space-x-2 transition"
               type="submit"
             >
-              Create {participants.length > 1 ? "Group Chat" : "Private Chat"}
+              Create {participantIds.length > 1 ? "Group Chat" : "Private Chat"}
             </button>
           </div>
         )}

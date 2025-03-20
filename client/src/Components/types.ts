@@ -19,6 +19,18 @@ export interface Notifications {
     read: boolean;
 }
 
+export interface Chat {
+    name: String;
+    isGroup: Boolean;
+    participants: Participants;
+}
+
+export interface Participants {
+    avatar: User["avatar"];
+    username: User["username"];
+    _id: User["_id"];
+}
+
 export interface User {
     _id: string;
     username: string;
