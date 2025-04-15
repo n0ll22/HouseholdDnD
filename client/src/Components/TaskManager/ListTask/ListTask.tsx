@@ -1,0 +1,44 @@
+import React from "react";
+import { Link, Outlet, useOutletContext } from "react-router-dom";
+import { TaskProp } from "../../types";
+import { timeInHMS } from "../../../timeConversion";
+import { v4 } from "uuid";
+
+interface TaskDataProp {
+  tasks: TaskProp[];
+}
+
+const ListTask: React.FC = () => {
+  const { taskData } = useOutletContext<{ taskData: TaskDataProp }>();
+
+  return (
+    <main className=" flex flex-col w-full items-start px-10 animate-fadeInFast">
+      <h1 className="border-l-4 pl-2 py-2 font-bold text-5xl my-10">
+        Hall of Tasks
+      </h1>
+      <div className="grid gap-10 grid-cols-3 lg:grid-cols-2 md:grid-cols-1 w-full">
+        {taskData.tasks.map((task: TaskProp) => (
+          <div
+            key={v4()}
+            className="border-b-2 p-2 flex flex-col justify-between transition hover:bg-white/50 rounded-lg hover:-translate-y-1"
+          >
+            <h2 className="font-bold text-3xl h-20">{task.title}</h2>
+            <p className="mb-2">{task.description.substring(0, 100)}...</p>
+            <p className="mb-2 font-bold">
+              Time: {timeInHMS(parseInt(task._length))}
+            </p>
+            <div className="flex w-full justify-between font-bold">
+              <div>EXP: {task.exp}</div>
+              <Link to={"tutorial/" + task._id}>
+                <div> {">"}Tutorials</div>
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Outlet />
+    </main>
+  );
+};
+
+export default ListTask;
