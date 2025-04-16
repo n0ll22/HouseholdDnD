@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { MessageProp, Participant, UserProp } from "../types";
+import { MessageProp, UserProp } from "../types";
 import { v4 } from "uuid";
 
 type Props = {

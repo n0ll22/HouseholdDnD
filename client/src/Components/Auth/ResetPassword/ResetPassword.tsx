@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom"; // Importing useNavigate and useParams
 import { apiUrl } from "../../types";
 

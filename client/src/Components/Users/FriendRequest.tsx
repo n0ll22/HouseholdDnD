@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FriendshipProp, UserProp } from "../types";
+import { FriendshipProp } from "../types";
 import { FaCheck } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import socket from "../socket";

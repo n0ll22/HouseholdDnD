@@ -94,14 +94,14 @@ const TaskComplete: React.FC<TaskCompleteProps> = ({
                   </div>
                 ))
               ) : (
-                <div>No task in progress...</div>
+                <div className="p-2">No task in progress...</div>
               )}
             </div>
           </div>
 
           <div className="relative h-6 w-3/4 bg-gray-200 rounded-md">
             <div
-              className="h-6 bg-green-400 rounded-md transition-all duration-200 ease-linear"
+              className="h-6 bg-green-400 rounded-md transition-all duration-1000 ease-linear"
               style={{ width: `${progressbar}%` }}
             ></div>
             <div className="absolute inset-0 flex items-center justify-center text-md">

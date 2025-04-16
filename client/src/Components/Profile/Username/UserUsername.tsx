@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from "react";
-import { User } from "../../types";
+import { UserProp } from "../../types";
 import { FaEdit } from "react-icons/fa";
 import { EditUserProp } from "../Profile/Profile";
 
@@ -10,7 +10,7 @@ interface Props {
   setEditLogo: React.Dispatch<React.SetStateAction<EditUserProp>>;
   editLogo: { username: boolean };
   newUserName: string;
-  loggedInUser: User;
+  loggedInUser: UserProp;
   isEditing: { username: boolean };
 }
 

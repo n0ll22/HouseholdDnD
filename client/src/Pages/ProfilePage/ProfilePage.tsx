@@ -9,7 +9,7 @@ import {
   UserProp,
 } from "../../Components/types";
 import { Link, Outlet } from "react-router-dom";
-import axios, { Axios, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 const ProfilePage: React.FC = () => {
   const [queries, setQueries] = useState<QueryProps>({

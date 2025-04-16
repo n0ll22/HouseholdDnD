@@ -1,11 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiUrl } from "../../types";
 
-type Props = {};
-
-const ReactivateAccount = (props: Props) => {
+const ReactivateAccount = () => {
   const { token } = useParams();
   const navigate = useNavigate();
   const [message, setMessage] = useState("Redirecting...");

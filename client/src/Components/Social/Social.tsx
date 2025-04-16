@@ -1,17 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import ProfileIcon from "../ProfileIcon/ProfileIcon";
-import { apiUrl, User } from "../types";
-import { useOutletContext } from "react-router-dom";
-import useGet from "../../Hooks/useGet";
+
+import { useUser } from "../Auth/UserContext";
 
 const Social: React.FC = () => {
-  const { data: loggedInUser } = useGet(apiUrl + "/user/loggedInUser");
-
-  //console.log(loggedInUser);
+  const loggedInUser = useUser();
 
   return (
     <div className="fixed right-0 top-1">
-      <ProfileIcon avatar={loggedInUser?.avatar} />
+      {loggedInUser && <ProfileIcon avatar={loggedInUser?.avatar} />}
     </div>
   );
 };

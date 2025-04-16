@@ -100,6 +100,7 @@ router.post("/register", async (req, res) => {
       banner: "bg-red-400",
       friendships: [],
       status: "online",
+      isAdmin: false,
     });
 
     // Set token for user

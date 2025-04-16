@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Social from "../../Components/Social/Social";
 
 const MainPage: React.FC = () => {
   return (

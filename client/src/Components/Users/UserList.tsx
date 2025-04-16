@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { QueryProps, UserDataProp, UserProp } from "../types.ts";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { SetQuery } from "../../QueryFunctions.tsx";

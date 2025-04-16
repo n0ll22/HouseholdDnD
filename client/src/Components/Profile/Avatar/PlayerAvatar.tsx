@@ -1,7 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { EditUserProp } from "../Profile/Profile";
-import AvatarSelector from "../../AvatarSelector/AvatarSelector";
-import { User } from "../../types";
+import React from "react";
 
 interface Props {
   avatar: string;

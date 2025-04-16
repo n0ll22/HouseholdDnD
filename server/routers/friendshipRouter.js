@@ -112,6 +112,10 @@ router.get("/getOneFriendship", auth, async (req, res) => {
       ],
     }).populate(["senderId", "receiverId"], "username avatar lvl");
 
+    if (!result) {
+      return res.status(204).send({ message: "No friendship was found!" });
+    }
+
     const updatedFriendship = {
       _id: result._id,
       __v: result.__v,
@@ -119,10 +123,6 @@ router.get("/getOneFriendship", auth, async (req, res) => {
       otherUser: result.senderId,
       status: result.status,
     };
-
-    if (!result) {
-      return res.status(204).send({ message: "No friendship was found!" });
-    }
 
     return res.status(200).send(updatedFriendship);
   } catch (err) {

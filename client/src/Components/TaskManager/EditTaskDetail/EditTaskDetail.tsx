@@ -139,7 +139,7 @@ const EditTaskDetail: React.FC = () => {
                 onChange={(e) =>
                   setTask((prev) => ({
                     ...prev!,
-                    exp: e.target.value,
+                    exp: parseInt(e.target.value, 10),
                   }))
                 }
                 value={newTask?.exp?.toString()}

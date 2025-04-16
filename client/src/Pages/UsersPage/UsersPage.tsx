@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Outlet } from "react-router-dom";
-import useGet from "../../Hooks/useGet";
 import LoadingSpinner from "../../Components/LoadingSpinner/LoadingSpinner";
-import { QueryProps, UserDataProp, UserProp } from "../../Components/types";
+import { QueryProps, UserProp } from "../../Components/types";
 import socket from "../../Components/socket";
-import axios, { Axios, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { useUser } from "../../Components/Auth/UserContext";
 
 const UsersPage: React.FC = () => {

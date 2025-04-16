@@ -18,7 +18,7 @@ const AddTask: React.FC = () => {
   const [task, setTask] = useState<NewTaskProp>({
     _id: "",
     title: "",
-    exp: "0",
+    exp: 0,
     _length: {
       h: "0",
       m: "0",
@@ -52,7 +52,7 @@ const AddTask: React.FC = () => {
       .post("http://localhost:8000/task/new", {
         title: task.title,
         description: task.description,
-        exp: parseInt(task.exp),
+        exp: task.exp,
         _length: timeInSeconds(task._length),
         tutorial: task.tutorial,
       })
@@ -126,8 +126,8 @@ const AddTask: React.FC = () => {
               required
               onChange={(e) =>
                 setTask((prev) => ({
-                  ...prev!,
-                  exp: e.target.value,
+                  ...prev,
+                  exp: parseInt(e.target.value, 10) || 0,
                 }))
               }
               value={task.exp?.toString()}

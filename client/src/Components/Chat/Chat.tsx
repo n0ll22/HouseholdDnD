@@ -13,7 +13,7 @@ import ChatRoomList from "./ChatRoomList";
 import NewChat from "./NewChat.tsx";
 import { FaUser } from "react-icons/fa6";
 import socket from "../socket";
-import { useNotification } from "../Notification/Notification.tsx";
+//import { useNotification } from "../Notification/Notification.tsx";
 
 const Chat = () => {
   const { id } = useParams();
@@ -27,7 +27,7 @@ const Chat = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const { notify } = useNotification();
+  //const { notify } = useNotification();
 
   const friends = friendships
     ? friendships
@@ -91,7 +91,6 @@ const Chat = () => {
             loggedInUser={loggedInUser}
             friends={friends}
             chatRooms={chatRooms}
-            setChatRooms={setChatRooms}
           />
           {!newChatInput && (
             <ChatRoomList
@@ -124,7 +123,6 @@ const Chat = () => {
             loggedInUser={loggedInUser}
             friends={friends}
             chatRooms={chatRooms}
-            setChatRooms={setChatRooms}
           />
           {!newChatInput && (
             <ChatRoomList

@@ -1,13 +1,13 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { EditUserProp } from "../Profile/Profile";
 import AvatarSelector from "../../AvatarSelector/AvatarSelector";
-import { User } from "../../types";
+import { UserProp } from "../../types";
 
 interface Props {
   setEditLogo: Dispatch<SetStateAction<EditUserProp>>;
   handleScroll: () => void;
   handleAvatarChange: () => void;
-  loggedInUser: User;
+  loggedInUser: UserProp;
   editLogo: { avatar: boolean; banner: boolean };
   isEditing: { avatar: boolean; banner: boolean };
   icon: JSX.Element;

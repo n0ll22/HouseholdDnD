@@ -1,6 +1,6 @@
-import React, { SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { RiBeerLine } from "react-icons/ri";
-import { FriendshipProp, UserProp } from "../../types";
+import { FriendshipProp } from "../../types";
 import { FaMessage } from "react-icons/fa6";
 import { IoMdPersonAdd } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
@@ -10,7 +10,7 @@ interface Props {
   username: string;
   taskTodayCount: number;
   lvl: number;
-  friendship: FriendshipProp;
+  friendship: FriendshipProp | null | undefined;
   handleSendFriendRequest: () => void;
   handleUnsendFriendRequest: (loggedInUserId: string) => void;
   handleNavigationToChat: () => void;
@@ -41,7 +41,7 @@ const UserBanner: React.FC<Props> = ({
           Today's Tasks: {taskTodayCount}
         </p>
       </div>
-      {friendship.status === "accepted" && (
+      {friendship?.status === "accepted" && (
         <div className="p-10 flex flex-col space-y-2">
           <button
             onClick={() => setUnfriendPopUp(true)}
@@ -63,7 +63,7 @@ const UserBanner: React.FC<Props> = ({
           </button>
         </div>
       )}
-      {friendship.status === "pending" && (
+      {friendship?.status === "pending" && (
         <div className="p-10">
           <button
             onClick={() => handleUnsendFriendRequest(friendship._id)}
@@ -73,8 +73,8 @@ const UserBanner: React.FC<Props> = ({
           </button>
         </div>
       )}
-      {friendship.status === "refused" ||
-        (friendship.status === "none" && (
+      {friendship?.status === "refused" ||
+        (friendship?.status === undefined && (
           <div className="p-10">
             <button
               className=" h-8 w-32 border drop-shadow rounded bg-white hover:bg-gray-200 active:translate-y-1 transition"
@@ -87,7 +87,7 @@ const UserBanner: React.FC<Props> = ({
             </button>
           </div>
         ))}
-      {friendship.status === "blocked" && (
+      {friendship?.status === "blocked" && (
         <div className="p-10">
           <button
             className=" h-8 w-32 border drop-shadow rounded bg-white hover:bg-gray-200 active:translate-y-1 transition"
@@ -100,7 +100,7 @@ const UserBanner: React.FC<Props> = ({
           </button>
         </div>
       )}
-      {unfriendPopUp && (
+      {unfriendPopUp && friendship && (
         <div className="absolute top-0 left-0 w-screen h-screen bg-gray-900/50">
           <div className="flex w-full h-full items-center justify-center">
             <div className="bg-white text-center p-4 rounded-lg space-y-10">

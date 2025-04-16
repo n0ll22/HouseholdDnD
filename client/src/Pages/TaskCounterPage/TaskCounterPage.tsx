@@ -154,37 +154,48 @@ const TaskCounterPage: React.FC = () => {
   };
 
   const completeProcess = async (processId: string) => {
-    await axios.post(`${apiUrl}/task/complete`, { processId }).then((res) => {
-      console.log(res);
-      setRenderHUD((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          currentExp: res.data.newExp,
-        };
+    if (userData?._id) {
+      await axios.post(`${apiUrl}/task/complete`, { processId }).then((res) => {
+        console.log(res);
+        setRenderHUD((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            currentExp: res.data.newExp,
+          };
+        });
+
+        console.log(renderHUD);
+
+        if (res.data.newExp > renderHUD!.nextLvlExp) {
+          setIsLevelUp(true);
+        }
+
+        calculateLevel(res.data.newExp);
+        setProcess(null);
+        console.log("calculate new exp");
       });
 
-      if (res.data.newExp > renderHUD!.nextLvlExp) {
-        setIsLevelUp(true);
-      }
-
-      calculateLevel(res.data.newExp);
-      setProcess(null);
-      console.log("calculate new exp");
-    });
-
-    await axios
-      .delete(`${apiUrl}/task/process?processId=${processId}`)
-      .then(() => {
-        setRenderTime("Done!");
-      })
-      .catch((err) => console.error(err.response.data.message));
+      await axios
+        .delete(`${apiUrl}/task/process?processId=${processId}`)
+        .then(() => {
+          setRenderTime("Done!");
+        })
+        .catch((err) => console.error(err.response.data.message));
+    }
   };
 
-  console.log("current process:", process);
-
   const calculateLevel = (newExp: number | undefined) => {
-    if (newExp) {
+    if (typeof newExp === "number" && newExp > -1) {
+      if (userData?.lvl === 1) {
+        console.log(renderHUD);
+        setRenderHUD({
+          currentExp: newExp,
+          lvl: 1,
+          nextLvlExp: levels[0].exp + levels[0].diff,
+          startExp: 0,
+        });
+      }
       const getCurrentLevelIndex = levels.findIndex((l) => l.exp > newExp);
       const getCurrentLevel = levels[getCurrentLevelIndex - 1];
 
@@ -194,8 +205,6 @@ const TaskCounterPage: React.FC = () => {
         nextLvlExp: getCurrentLevel.exp + getCurrentLevel.diff,
         startExp: getCurrentLevel.exp,
       });
-
-      console.log(getCurrentLevel);
     }
   };
 
@@ -212,24 +221,20 @@ const TaskCounterPage: React.FC = () => {
         .then((res) => {
           const taskProc = res.data[0];
           if (!taskProc) return;
-          console.log("IRAN:", taskProc);
+
           setProcess(res.data[0]);
-          setSelectedTask(res.data[0].taskId);
+          setSelectedTask(taskProc.taskId);
 
           localStorage.setItem(
             "currentTask",
             JSON.stringify({
-              id: res.data.taskId._id,
+              id: res.data.taskId,
               startTime: new Date(taskProc.startTime).getTime(),
               duration: taskProc.duration,
             })
           );
         })
         .catch((err) => console.error("Process fetch error", err));
-
-      const currentLevel = levels.find((l) => l.lvl === userData.lvl);
-
-      console.log(currentLevel);
     }
   }, [userData]);
 
@@ -243,12 +248,13 @@ const TaskCounterPage: React.FC = () => {
     if (!startTime || !duration) return;
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const elapsedMs = Date.now() - startTime;
+      const elapsed = elapsedMs / 1000;
       const remaining = Math.max(duration - elapsed, 0);
       const percent = Math.min((elapsed / duration) * 100, 100);
 
       setProgressbar(percent);
-      setRenderTime(remaining > 0 ? timeInHMS(remaining) : "Done!");
+      setRenderTime(remaining > 0 ? timeInHMS(Math.ceil(remaining)) : "Done!");
       updateProcess(process._id, percent);
 
       if (remaining <= 0) {
@@ -274,8 +280,6 @@ const TaskCounterPage: React.FC = () => {
   useEffect(() => {
     setIsVisible(!!queries.search);
   }, [queries.search]);
-
-  console.log(process);
 
   return (
     <>

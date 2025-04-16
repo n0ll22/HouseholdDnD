@@ -1,9 +1,8 @@
 import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
-import axios from "axios";
 import { FaCheck } from "react-icons/fa6";
-import { apiUrl, ChatProp, FriendshipProp, UserProp } from "../types";
+import { ChatProp, FriendshipProp, UserProp } from "../types";
 import NewChatList from "./NewChatList";
-import ChatRoom from "./ChatRoom";
+
 import socket from "../socket";
 
 type Props = {
@@ -12,7 +11,6 @@ type Props = {
   friends?: FriendshipProp["otherUser"][];
   newChatInput: string;
   setNewChatInput: Dispatch<SetStateAction<string>>;
-  setChatRooms: Dispatch<SetStateAction<ChatProp[]>>;
 };
 
 const NewChat: React.FC<Props> = ({
@@ -21,7 +19,6 @@ const NewChat: React.FC<Props> = ({
   newChatInput,
   setNewChatInput,
   chatRooms,
-  setChatRooms,
 }) => {
   const [participantIds, setParticipantIds] = useState<string[]>([]);
   const [showList, setShowList] = useState({ input: false, selected: false });

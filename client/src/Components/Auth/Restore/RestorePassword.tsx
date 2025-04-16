@@ -1,10 +1,8 @@
 import axios from "axios";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { apiUrl } from "../../types";
 
-type Props = {};
-
-const RestorePassword = (props: Props) => {
+const RestorePassword: React.FC = () => {
   const [email, setEmail] = useState<string>();
   const [message, setMessage] = useState<string>();
 
