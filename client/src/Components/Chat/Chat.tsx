@@ -1,18 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
-import {
-  apiUrl,
-  ChatProp,
-  FriendshipProp,
-  MessageProp,
-  UserProp,
-} from "../types";
-import axios from "axios";
+import { ChatProp, FriendshipProp, MessageProp, UserProp } from "../types";
+
 import ChatRoom from "./ChatRoom";
 import ChatRoomList from "./ChatRoomList";
 import NewChat from "./NewChat.tsx";
 import { FaUser } from "react-icons/fa6";
 import socket from "../socket";
+import { Api } from "../../QueryFunctions.tsx";
 //import { useNotification } from "../Notification/Notification.tsx";
 
 const Chat = () => {
@@ -42,11 +37,9 @@ const Chat = () => {
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/chat/getByParticipants/${loggedInUser._id}`)
-      .then((res) => setChatRooms(res.data))
-      .catch(console.error);
-
+    if (loggedInUser) {
+      Api().getByParticipants(loggedInUser, setChatRooms);
+    }
     socket.on("receive_new_chat", (chatRoom: ChatProp) => {
       setChatRooms((prev) => [...prev, chatRoom]);
     });

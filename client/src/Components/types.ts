@@ -1,5 +1,12 @@
 export const apiUrl = "http://localhost:8000";
 
+export interface RegistrationData {
+  email: string;
+  username: string;
+  password: string;
+  passwordAgain: string;
+}
+
 export interface TaskProp {
   _id: string;
   title: string;

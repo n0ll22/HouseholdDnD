@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { createContext, useEffect, useState } from "react";
+import { Api } from "../../QueryFunctions";
 
 // AuthContext types
 interface AuthContextType {
@@ -23,14 +23,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
   // Check if the user is logged in
   const getLoggedIn = async () => {
-    try {
-      const result = await axios.get("http://localhost:8000/user/loggedIn");
-      setLoggedIn(result.data);
-    } catch (error) {
-      console.error("Error fetching login status", error);
-    } finally {
-      setLoading(false); // Loading completes whether success or error
-    }
+    await Api().getLoggedIn(setLoggedIn, setLoading);
   };
 
   useEffect(() => {

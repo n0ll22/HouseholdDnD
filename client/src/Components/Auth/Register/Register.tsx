@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Api } from "../../../QueryFunctions";
 
 /**
  * Regisztáció megvalósítása a felhasználó oldalon
@@ -18,9 +18,9 @@ interface RegisterData {
 const Register: React.FC = () => {
   //UseState hook változók
   //Hibák tárolása
-  const [error, setError] = useState<string>();
+  const [message, setMessage] = useState<string | null>(null);
   //Regisztrációs adatok tárolása
-  const [data, setData] = useState<RegisterData>({
+  const [registrationData, setData] = useState<RegisterData>({
     email: "",
     username: "",
     password: "",
@@ -34,21 +34,12 @@ const Register: React.FC = () => {
     //Ha minden mező ki van töltve, akkor küldés az adatbázishoz
     e.preventDefault();
     //HTTP POST kérés az adatbázis felé
-    await axios
-      .post("http://localhost:8000/user/register", data)
-      .then(() => {
-        //Ha sikeres a regisztáció automatikusan bejelenkeztet minket az oldal
-        navigate("/"); //Navigáljunk a főoldalra majd frissítsük az oldalt
-        window.location.reload(); //Oldal frissítése
-      })
-      .catch((err) => {
-        //Hiba esetén jelenítsük meg a hibát
-        console.error(err);
-        setError(err?.response?.data?.Error);
-      });
+    if (registrationData) {
+      await Api().postRegistration(registrationData, navigate, setMessage);
+    }
   };
 
-  console.log(data);
+  console.log(registrationData);
 
   //JSX Komponens
   return (
@@ -71,7 +62,7 @@ const Register: React.FC = () => {
               type="email"
               id="email"
               name="email"
-              value={data.email}
+              value={registrationData.email}
               onChange={(e) =>
                 setData((prev) => ({
                   ...prev!,
@@ -93,7 +84,7 @@ const Register: React.FC = () => {
               type="text"
               id="name"
               name="name"
-              value={data.username}
+              value={registrationData.username}
               onChange={(e) =>
                 setData((prev) => ({
                   ...prev!,
@@ -114,7 +105,7 @@ const Register: React.FC = () => {
               type="password"
               name="password"
               id="password"
-              value={data.password}
+              value={registrationData.password}
               onChange={(e) =>
                 setData((prev) => ({
                   ...prev!,
@@ -134,7 +125,7 @@ const Register: React.FC = () => {
               type="password"
               name="password_again"
               id="password_again"
-              value={data.passwordAgain}
+              value={registrationData.passwordAgain}
               onChange={(e) =>
                 setData((prev) => ({
                   ...prev!,
@@ -149,7 +140,7 @@ const Register: React.FC = () => {
             id="submitLogin"
             className=" border rounded-lg w-full bg-white cursor-pointer hover:bg-gray-200 transition p-1"
           />
-          {error && <p className="text-red-700">{error}</p>}
+          {message && <p className="text-red-700">{message}</p>}
         </div>
         <p className="mt-10">Already a member?</p>
         <p className="border rounded-lg text-center bg-white cursor-pointer hover:bg-gray-200 transition">

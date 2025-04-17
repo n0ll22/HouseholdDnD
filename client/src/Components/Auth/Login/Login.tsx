@@ -1,9 +1,9 @@
 //Importálások
-import axios from "axios";
 import React, { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginData } from "../../types";
 import { useAuth } from "../useAuth";
+import { Api } from "../../../QueryFunctions";
 
 /* Ez a React Arrow Function Component a bejelentkezés felhasználói oldaláért felel 
    Rövid magyarázat:
@@ -20,7 +20,7 @@ const Login: React.FC = () => {
     password: "",
   });
   //Bejelentkezési hibák tárolása
-  const [loginError, setLoginError] = useState<string>();
+  const [message, setMessage] = useState<string | null>(null);
   //Bejelentkezés állapota
   const [loggedIn, setLoggedIn] = useState(false);
   //Bejelentkezés állapotának lekérdezése egyedi hook-kal
@@ -43,19 +43,13 @@ const Login: React.FC = () => {
     //Adatok meglételének ellenőrzése
     if (loginData.username && loginData.password) {
       //HTTP POST kérés az adatbázis felé
-      await axios
-        .post("http://localhost:8000/user/login", loginData)
-        .then(() => {
-          getLoggedIn(); //Ellenőrzés, hogy sikerült-e bejelentkezni
-          checkLoginStatus();
-          navigate("/"); //Navigálás a főoldalra
-          window.location.reload(); //Oldal újratöltése
-        })
-        .catch((err) => {
-          //Hiba esetén hiba megjeleníése
-          console.error(err);
-          setLoginError(err.response.data.error); //Hiba tárolása
-        });
+      await Api().postLogin(
+        loginData,
+        getLoggedIn,
+        checkLoginStatus,
+        navigate,
+        setMessage
+      );
     }
   };
 
@@ -114,24 +108,26 @@ const Login: React.FC = () => {
             </div>
 
             {/* Hiba megjelenítése, ha van */}
-            {loginError && (
+            {message && (
               <p className="text-red-700 mb-4 flex flex-col">
-                <span>{loginError} </span>
-                {loginError.includes("deleted") ? (
+                <span>{message} </span>
+                {message.includes("deleted") ? (
                   <button
                     onClick={() => navigate("/restoreAccount")}
                     className="text-left underline text-black"
                   >
                     Click here to restore it!
                   </button>
-                ) : loginError.includes("password") ? (
+                ) : message.includes("password") ? (
                   <button
                     onClick={() => navigate("/restorePassword")}
                     className="text-left underline text-black"
                   >
                     Forgot password?
                   </button>
-                ) : null}
+                ) : (
+                  message
+                )}
               </p>
             )}
 

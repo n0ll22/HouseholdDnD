@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom"; // Importing useNavigate and useParams
-import { apiUrl } from "../../types";
+import { Api } from "../../../QueryFunctions";
 
 interface InputProp {
   password: string;
@@ -15,24 +14,21 @@ const ResetPassword = () => {
     password: "",
     passwordAgain: "",
   });
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate(); // Using useNavigate instead of useHistory
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Send the new password and token to the backend
-    await axios
-      .post(apiUrl + "/user/reset-password", {
+    if (token && password.password && password.passwordAgain) {
+      // Send the new password and token to the backend
+      await Api().postResetPassword(
         token,
-        password: password.password,
-        passwordAgain: password.passwordAgain,
-      })
-      .then(() => {
-        setMessage("Password reset successful! Redirecting to login...");
-        setTimeout(() => navigate("/"), 2000); // Corrected to use navigate with the URL directly} );
-      })
-      .catch((err) => setMessage(err.response.data.Error));
+        password.password,
+        password.passwordAgain,
+        setMessage,
+        navigate
+      );
+    }
   };
 
   return (

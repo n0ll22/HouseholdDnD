@@ -1,17 +1,15 @@
-import axios from "axios";
 import React, { FormEvent, useState } from "react";
-import { apiUrl } from "../../types";
+import { Api } from "../../../QueryFunctions";
 
 const RestorePassword: React.FC = () => {
   const [email, setEmail] = useState<string>();
-  const [message, setMessage] = useState<string>();
+  const [message, setMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    axios
-      .post(apiUrl + "/user/restorePassword", { email: email })
-      .then(() => setMessage("Email sent to your adress!"))
-      .catch((err) => setMessage(err.response.data.Error));
+    if (email) {
+      await Api().postRestorePassword(email, setMessage);
+    }
   };
 
   console.log(email);

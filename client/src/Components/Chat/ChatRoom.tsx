@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   apiUrl,
   ChatRoomProp,
@@ -13,8 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
 import { FaAngleUp } from "react-icons/fa";
 import socket from "../socket";
-import { useNotification } from "../Notification/Notification";
-import emitter from "../eventBus";
+import { Api } from "../../QueryFunctions";
 
 interface Prop {
   _id: string | undefined;
@@ -23,17 +22,18 @@ interface Prop {
 
 const ChatRoom: React.FC<Prop> = ({ _id, loggedInUser }) => {
   const nav = useNavigate();
-  const { notify } = useNotification();
-  const [chatRoom, setChatRoom] = useState<ChatRoomProp>();
+  const [chatRoom, setChatRoom] = useState<ChatRoomProp | null>(null);
   const [newMessage, setNewMessage] = useState<MessagePropSend>({
     chatId: "",
     content: "",
     senderId: loggedInUser._id,
   });
   useEffect(() => {
-    socket.emit("join_chat", _id);
+    if (_id) {
+      socket.emit("join_chat", _id);
 
-    axios.get(apiUrl + "/chat/" + _id).then((res) => setChatRoom(res.data));
+      Api().getChatById(_id, setChatRoom);
+    }
   }, [_id]);
 
   const handleTextFormat = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

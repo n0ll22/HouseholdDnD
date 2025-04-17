@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import pfps from "../../img/pfps/pfps.json";
-import axios from "axios";
+import { Api } from "../../QueryFunctions";
 
 interface Props {
   _id: string;
@@ -11,10 +11,7 @@ const AvatarSelector: React.FC<Props> = ({ _id }) => {
 
   const handleSelected = async (avatar: string) => {
     const updateData = { avatar, _id };
-    await axios
-      .put("http://localhost:8000/user/updateAvatar", updateData)
-      .then(() => window.location.reload())
-      .catch((err) => console.error(err));
+    await Api().putAvatar(updateData);
   };
   console.log(pfps);
   return (
